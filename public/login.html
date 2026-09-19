@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mini CRM - Login</title>
+
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="login-header">
+                <h1>Mini CRM</h1>
+                <p>Client Lead Management System</p>
+            </div>
+
+            <h2>Admin Login</h2>
+
+            <p class="login-description">
+                Sign in to manage your leads and clients.
+            </p>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <button type="submit">
+                    Login
+                </button>
+
+            </form>
+
+            <p id="loginMessage"></p>
+
+        </div>
+
+    </div>
+
+    <script>
+        const loginForm =
+            document.getElementById("loginForm");
+
+        const loginMessage =
+            document.getElementById("loginMessage");
+
+        loginForm.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            loginMessage.textContent = "";
+
+            try {
+
+                const response = await fetch("/api/auth/login", {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+
+                    localStorage.setItem(
+                        "token",
+                        data.token
+                    );
+
+                    window.location.href = "/";
+
+                } else {
+
+                    loginMessage.textContent =
+                        data.message;
+
+                }
+
+            } catch (error) {
+
+                console.error("Login error:", error);
+
+                loginMessage.textContent =
+                    "Unable to connect to the server.";
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
